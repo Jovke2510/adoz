@@ -97,7 +97,6 @@ void main( void )
     aic3204_disable();
 
     printf( "\n***Program has Terminated***\n" );
-    printf( "\n***Program has Terminated***\n" );
 	SW_BREAKPOINT;
 }
 
