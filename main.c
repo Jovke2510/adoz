@@ -17,6 +17,8 @@
 #include "ezdsp5535_aic3204_dma.h"
 #include "WAVheader.h"
 #include "iir.h"
+#include "fir.h"
+#include "FIR_high_pass_35th_order_filter.h"
 
 static WAV_HEADER outputWAVhdr;
 static WAV_HEADER inputWAVhdr;
@@ -36,7 +38,10 @@ Int16 OutputBufferR[AUDIO_IO_SIZE];
 
 /* TO DO: Define history buffers and Rd/Wr pointers*/
 /* Your code here */
-
+Int16 HistoryBufferL[35];
+Int16 HistoryBufferR[35];
+Uint16 index;
+Int16 Dirak[AUDIO_IO_SIZE];
 /*
  *
  *  main( )
@@ -56,7 +61,7 @@ void main( void )
     /* Initialise hardware interface and I2C for code */
     aic3204_hardware_init();
 
-	aic3204_set_input_filename("../11.wav");
+	aic3204_set_input_filename("../16.wav");
 	aic3204_set_output_filename("../out_signal1.wav");
 
     /* Initialise the AIC3204 codec */
@@ -76,7 +81,17 @@ void main( void )
 
     /* TO DO: Initialize history buffers to 0 */
     /* Your code here */
+    int k;
+    	for(k = 0; k< 121; k++){
+    		HistoryBufferL[i] = 0;
+    		HistoryBufferR[i] = 0;
+    	}
+    index = 0;
 
+    Dirak[0] = 32767;
+    for(i = 1; i<AUDIO_IO_SIZE; i++){
+    	Dirak[i] = 0;
+    }
 
 	for(i=0;i<number_of_blocks;i++)
 	{
@@ -87,8 +102,8 @@ void main( void )
 
 		for(j = 0; j < AUDIO_IO_SIZE; j++)
 		{
-			OutputBufferL[j] = InputBufferL[j];
-			OutputBufferR[j] = InputBufferR[j];
+			OutputBufferL[j] = fir_basic(InputBufferL[j], highpass_3kHz_35th_order, HistoryBufferL, 35);
+			OutputBufferR[j] = fir_basic(InputBufferR[j], highpass_3kHz_35th_order, HistoryBufferR, 35);
 		}
 		aic3204_write_block(OutputBufferL, OutputBufferR);
 	}
