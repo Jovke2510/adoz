@@ -43,7 +43,7 @@ Int16 OutputBufferR[AUDIO_IO_SIZE];
  *
  */
 void main( void )
-{   
+{
 	int i;
 	Int32 j;
 	Int32 number_of_blocks;
@@ -52,18 +52,18 @@ void main( void )
     EZDSP5535_init( );
 
 	printf("\n ADOZ - Vezba 8 \n");
-		
+
     /* Initialise hardware interface and I2C for code */
     aic3204_hardware_init();
-	
+
 	aic3204_set_input_filename("../11.wav");
 	aic3204_set_output_filename("../out_signal1.wav");
-	
+
     /* Initialise the AIC3204 codec */
 	aic3204_init();
-          
+
     aic3204_dma_init();
-	
+
 	aic3204_read_wav_header(&inputWAVhdr);
 
     // Set up output WAV header
@@ -92,10 +92,11 @@ void main( void )
 		}
 		aic3204_write_block(OutputBufferL, OutputBufferR);
 	}
-    	
-	/* Disable I2S and put codec into reset */ 
+
+	/* Disable I2S and put codec into reset */
     aic3204_disable();
 
+    printf( "\n***Program has Terminated***\n" );
     printf( "\n***Program has Terminated***\n" );
 	SW_BREAKPOINT;
 }
