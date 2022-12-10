@@ -19,6 +19,7 @@
 #include "iir.h"
 #include "fir.h"
 #include "FIR_high_pass_35th_order_filter.h"
+#include "IIR_notch_filters.h"
 
 static WAV_HEADER outputWAVhdr;
 static WAV_HEADER inputWAVhdr;
@@ -40,7 +41,10 @@ Int16 OutputBufferR[AUDIO_IO_SIZE];
 /* Your code here */
 Int16 HistoryBufferL[35];
 Int16 HistoryBufferR[35];
-Uint16 index;
+Int16 HistoryBufferX[2];
+Int16 HistoryBufferY[2];
+Int16 OutputBufferL_pom[AUDIO_IO_SIZE];
+Int16 OutputBufferR_pom[AUDIO_IO_SIZE];
 Int16 Dirak[AUDIO_IO_SIZE];
 /*
  *
@@ -85,8 +89,11 @@ void main( void )
     	for(k = 0; k< 121; k++){
     		HistoryBufferL[i] = 0;
     		HistoryBufferR[i] = 0;
+    		if(k<2){
+    			HistoryBufferX[i] = 0;
+    	 		HistoryBufferY[i] = 0;
+    		}
     	}
-    index = 0;
 
     Dirak[0] = 32767;
     for(i = 1; i<AUDIO_IO_SIZE; i++){
@@ -102,8 +109,10 @@ void main( void )
 
 		for(j = 0; j < AUDIO_IO_SIZE; j++)
 		{
-			OutputBufferL[j] = fir_basic(InputBufferL[j], highpass_3kHz_35th_order, HistoryBufferL, 35);
-			OutputBufferR[j] = fir_basic(InputBufferR[j], highpass_3kHz_35th_order, HistoryBufferR, 35);
+			OutputBufferL_pom[j] = fir_basic(InputBufferL[j], highpass_3kHz_35th_order, HistoryBufferL, 35);
+			OutputBufferR_pom[j] = fir_basic(InputBufferR[j], highpass_3kHz_35th_order, HistoryBufferR, 35);
+			OutputBufferL[j] = second_order_IIR(OutputBufferL_pom[j], IIR_notch_pass_2kHz_2nd_order, HistoryBufferX, HistoryBufferY);
+			OutputBufferR[j] = second_order_IIR(OutputBufferR_pom[j], IIR_notch_pass_2kHz_2nd_order, HistoryBufferX, HistoryBufferY);
 		}
 		aic3204_write_block(OutputBufferL, OutputBufferR);
 	}
