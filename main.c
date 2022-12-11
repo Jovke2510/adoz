@@ -19,13 +19,14 @@
 #include "iir.h"
 #include "fir.h"
 #include "FIR_highpass_filters.h"
-IR_notch_filters.h"
+#include "IR_notch_filters.h"
 
 static WAV_HEADER outputWAVhdr;
 static WAV_HEADER inputWAVhdr;
 
 #define SAMPLE_RATE 48000L
 #define GAIN 0
+#define FIR_ORDER 77
 
 #pragma DATA_ALIGN(InputBufferL,4)
 Int16 InputBufferL[AUDIO_IO_SIZE];
@@ -39,8 +40,8 @@ Int16 OutputBufferR[AUDIO_IO_SIZE];
 
 /* TO DO: Define history buffers and Rd/Wr pointers*/
 /* Your code here */
-Int16 HistoryBufferL[35];
-Int16 HistoryBufferR[35];
+Int16 HistoryBufferL[FIR_ORDER];
+Int16 HistoryBufferR[FIR_ORDER];
 Int16 HistoryBufferX[2];
 Int16 HistoryBufferY[2];
 Int16 OutputBufferL_pom[AUDIO_IO_SIZE];
@@ -86,7 +87,7 @@ void main( void )
     /* TO DO: Initialize history buffers to 0 */
     /* Your code here */
     int k;
-    	for(k = 0; k< 121; k++){
+    	for(k = 0; k < FIR_ORDER; k++){
     		HistoryBufferL[i] = 0;
     		HistoryBufferR[i] = 0;
     		if(k<2){
@@ -109,8 +110,8 @@ void main( void )
 
 		for(j = 0; j < AUDIO_IO_SIZE; j++)
 		{
-			OutputBufferL_pom[j] = fir_basic(InputBufferL[j], highpass_3kHz_35th_order, HistoryBufferL, 35);
-			OutputBufferR_pom[j] = fir_basic(InputBufferR[j], highpass_3kHz_35th_order, HistoryBufferR, 35);
+			OutputBufferL_pom[j] = fir_basic(InputBufferL[j], highpass_3kHz_77th_order, HistoryBufferL, FIR_ORDER);
+			OutputBufferR_pom[j] = fir_basic(InputBufferR[j], highpass_3kHz_77th_order, HistoryBufferR, FIR_ORDER);
 			OutputBufferL[j] = second_order_IIR(OutputBufferL_pom[j], IIR_notch_pass_2kHz_2nd_order, HistoryBufferX, HistoryBufferY);
 			OutputBufferR[j] = second_order_IIR(OutputBufferR_pom[j], IIR_notch_pass_2kHz_2nd_order, HistoryBufferX, HistoryBufferY);
 		}
