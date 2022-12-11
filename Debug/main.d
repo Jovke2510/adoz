@@ -32,6 +32,7 @@ main.obj: ../ezdsp5535_aic3204_dma.h
 main.obj: ../iir.h
 main.obj: ../fir.h
 main.obj: ../FIR_highpass_filters.h
+main.obj: ../IIR_notch_filters.h
 
 ../main.c: 
 C:/ti/ccsv6/tools/compiler/c5500_4.4.1/include/stdio.h: 
@@ -65,3 +66,4 @@ C:/ti/ccsv6/tools/compiler/c5500_4.4.1/include/stdio.h:
 ../iir.h: 
 ../fir.h: 
 ../FIR_highpass_filters.h: 
+../IIR_notch_filters.h: 
