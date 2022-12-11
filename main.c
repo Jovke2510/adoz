@@ -18,8 +18,8 @@
 #include "WAVheader.h"
 #include "iir.h"
 #include "fir.h"
-#include "FIR_high_pass_35th_order_filter.h"
-#include "IIR_notch_filters.h"
+#include "FIR_highpass_filters.h"
+IR_notch_filters.h"
 
 static WAV_HEADER outputWAVhdr;
 static WAV_HEADER inputWAVhdr;
