@@ -26,7 +26,7 @@ static WAV_HEADER inputWAVhdr;
 
 #define SAMPLE_RATE 48000L
 #define GAIN 0
-#define FIR_ORDER 77
+#define FIR_ORDER 129
 
 #pragma DATA_ALIGN(InputBufferL,4)
 Int16 InputBufferL[AUDIO_IO_SIZE];
@@ -110,8 +110,8 @@ void main( void )
 
 		for(j = 0; j < AUDIO_IO_SIZE; j++)
 		{
-			OutputBufferL_pom[j] = fir_basic(InputBufferL[j], highpass_3kHz_77th_order, HistoryBufferL, FIR_ORDER);
-			OutputBufferR_pom[j] = fir_basic(InputBufferR[j], highpass_3kHz_77th_order, HistoryBufferR, FIR_ORDER);
+			OutputBufferL_pom[j] = fir_basic(InputBufferL[j], highpass_3kHz_129th_order, HistoryBufferL, FIR_ORDER);
+			OutputBufferR_pom[j] = fir_basic(InputBufferR[j], highpass_3kHz_129th_order, HistoryBufferR, FIR_ORDER);
 			OutputBufferL[j] = second_order_IIR(OutputBufferL_pom[j], IIR_notch_pass_2kHz_2nd_order, HistoryBufferX, HistoryBufferY);
 			OutputBufferR[j] = second_order_IIR(OutputBufferR_pom[j], IIR_notch_pass_2kHz_2nd_order, HistoryBufferX, HistoryBufferY);
 		}
