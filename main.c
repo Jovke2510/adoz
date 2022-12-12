@@ -112,8 +112,8 @@ void main( void )
 		{
 			OutputBufferL_pom[j] = fir_basic(InputBufferL[j], highpass_3kHz_129th_order, HistoryBufferL, FIR_ORDER);
 			OutputBufferR_pom[j] = fir_basic(InputBufferR[j], highpass_3kHz_129th_order, HistoryBufferR, FIR_ORDER);
-			OutputBufferL[j] = second_order_IIR(OutputBufferL_pom[j], IIR_notch_pass_2kHz_2nd_order, HistoryBufferX, HistoryBufferY);
-			OutputBufferR[j] = second_order_IIR(OutputBufferR_pom[j], IIR_notch_pass_2kHz_2nd_order, HistoryBufferX, HistoryBufferY);
+			OutputBufferL[j] = second_order_IIR(OutputBufferL_pom[j], IIR_notch_2kHz_2nd_order, HistoryBufferX, HistoryBufferY);
+			OutputBufferR[j] = second_order_IIR(OutputBufferR_pom[j], IIR_notch_2kHz_2nd_order, HistoryBufferX, HistoryBufferY);
 		}
 		aic3204_write_block(OutputBufferL, OutputBufferR);
 	}
