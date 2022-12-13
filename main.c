@@ -27,6 +27,7 @@ static WAV_HEADER inputWAVhdr;
 #define SAMPLE_RATE 48000L
 #define GAIN 0
 #define FIR_ORDER 129
+#define IIR_ORDER 3 //IIR_ORDER = order/2
 
 #pragma DATA_ALIGN(InputBufferL,4)
 Int16 InputBufferL[AUDIO_IO_SIZE];
@@ -42,8 +43,10 @@ Int16 OutputBufferR[AUDIO_IO_SIZE];
 /* Your code here */
 Int16 HistoryBufferL[FIR_ORDER];
 Int16 HistoryBufferR[FIR_ORDER];
-Int16 HistoryBufferX[2];
-Int16 HistoryBufferY[2];
+//Int16 HistoryBufferX[2];
+//Int16 HistoryBufferY[2];
+Int16 HistoryBufferX[IIR_ORDER][2];
+Int16 HistoryBufferY[IIR_ORDER][2];
 Int16 OutputBufferL_pom[AUDIO_IO_SIZE];
 Int16 OutputBufferR_pom[AUDIO_IO_SIZE];
 Int16 Dirak[AUDIO_IO_SIZE];
@@ -86,15 +89,18 @@ void main( void )
 
     /* TO DO: Initialize history buffers to 0 */
     /* Your code here */
-    int k;
-    	for(k = 0; k < FIR_ORDER; k++){
-    		HistoryBufferL[i] = 0;
-    		HistoryBufferR[i] = 0;
-    		if(k<2){
-    			HistoryBufferX[i] = 0;
-    	 		HistoryBufferY[i] = 0;
-    		}
+    int k, l, m;
+    for(k = 0; k < FIR_ORDER; k++){
+    	HistoryBufferL[k] = 0;
+    	HistoryBufferR[k] = 0;
+    }
+
+    for(l = 0; l<IIR_ORDER; l++){
+    	for(m = 0; m<2; m++){
+    		HistoryBufferX[l][m] = 0;
+    		HistoryBufferY[l][m] = 0;
     	}
+    }
 
     Dirak[0] = 32767;
     for(i = 1; i<AUDIO_IO_SIZE; i++){
@@ -112,8 +118,8 @@ void main( void )
 		{
 			OutputBufferL_pom[j] = fir_basic(InputBufferL[j], highpass_3kHz_129th_order, HistoryBufferL, FIR_ORDER);
 			OutputBufferR_pom[j] = fir_basic(InputBufferR[j], highpass_3kHz_129th_order, HistoryBufferR, FIR_ORDER);
-			OutputBufferL[j] = second_order_IIR(OutputBufferL_pom[j], IIR_notch_2kHz_2nd_order, HistoryBufferX, HistoryBufferY);
-			OutputBufferR[j] = second_order_IIR(OutputBufferR_pom[j], IIR_notch_2kHz_2nd_order, HistoryBufferX, HistoryBufferY);
+			OutputBufferL[j] = sixth_order_IIR(OutputBufferL_pom[j], IIR_notch_2kHz_6th_order, HistoryBufferX, HistoryBufferY);
+			OutputBufferR[j] = sixth_order_IIR(OutputBufferR_pom[j], IIR_notch_2kHz_6th_order, HistoryBufferX, HistoryBufferY);
 		}
 		aic3204_write_block(OutputBufferL, OutputBufferR);
 	}
